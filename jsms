@@ -1,0 +1,72 @@
+#!/usr/bin/env ruby
+
+# --- configuration starts here:
+
+# contacts file:
+contacts = ENV['HOME']+'/.jsms-contacts'
+#example:
+#   gf      3471111111
+#   jpi     3472222222
+#   piotr   3473333333
+
+# international area code (if required by your phone telco to send sms messages):
+#areacode = "+39"
+areacode = ""  
+
+# jolla phone local address on your wifi LAN:
+jolladdr = "192.168.7.97"
+
+# log messages in this file or "/dev/null"
+logfile  = ENV['HOME']+'/.jsms-log'
+
+# print out what's happening:
+debug    = true
+
+# --- configuration ends here
+
+# --- main:
+
+cnt = Hash[*File.read(contacts).split(/[ \n]+/).collect { |i| i.strip }]
+dst = ''
+if ARGV.size >= 1
+  dst = cnt[ARGV.first]
+  dst = ARGV.first  unless dst
+  fail "!--invalid contact: #{dst.inspect}"  if dst == '' || dst.gsub(/[0-9]/, '') != ''
+end
+fail "!--usage: #{$0} #{dst} text..."  if ARGV.size < 2
+
+dst = cnt[ARGV.first]
+dst = ARGV.first  unless dst
+fail "!--invalid number: #{dst.inspect}"  if dst == '' || dst.gsub(/[0-9]/, '') != ''
+
+dst = areacode+dst  if dst[0..0]!='+'
+ARGV.delete_at 0
+msg = (ARGV.join ' ')
+siz = msg.size
+mem = Time.now.strftime("%Y-%m-%d %H:%M:%S\t#{dst}\t")+msg
+
+msg = msg.gsub('"', '\"').gsub("'", "'\"'\"'")
+cmd = "ssh nemo@#{jolladdr} dbus-send --system --print-reply "+
+      "--dest=org.ofono /ril_0 org.ofono.MessageManager.SendMessage "+
+      "string:#{dst.inspect} 'string:\"#{msg}\"'"
+
+puts '',"!--[#{siz}]  #{cmd}",''   if debug
+
+sleep 1   # small "don't panic" pause
+
+fp = File.open logfile, "a+"
+fp.puts mem
+fp.close
+pid = spawn cmd
+Process.wait pid
+err = $?.exitstatus
+fail "!--error #{err}"  if err != 0
+
+num = `ssh nemo@#{jolladdr} commhistory-tool listgroups | grep ^Group | grep #{dst}`.chomp
+grp = "-newgroup"
+grp = "-group #{num.split[1]}"  if num != ''
+cmd = "ssh nemo@#{jolladdr} commhistory-tool add #{grp} -text '\"#{msg}\"' -out -sms \"''\" #{dst.inspect}"
+puts '', Time.now, cmd
+exec cmd
+
+# ---
