@@ -14,19 +14,27 @@ contacts = ENV['HOME']+'/.jsms-contacts'
 areacode = ""  
 
 # jolla phone local address on your wifi LAN:
-jolladdr = "192.168.7.97"
+jolladdr = ENV['JOLLA_IP'] || "jolla"
 
 # log messages in this file or "/dev/null"
 logfile  = ENV['HOME']+'/.jsms-log'
 
-# print out what's happening:
+# print what's happening:
 debug    = true
 
 # --- configuration ends here
 
 # --- main:
 
-cnt = Hash[*File.read(contacts).split(/[ \n]+/).collect { |i| i.strip }]
+cnt = {}
+File.readlines(contacts).each do |r|
+  next if r.chomp == ''
+  nam, num = r.chomp.strip.split(/[ \t,]+/)
+  fail "!--invalid contact name: #{r.inspect}"  if "#{nam}"=='' || nam.gsub(/[a-z0-9]+/,'')!=''
+  fail "!--invalid contact number: #{r.inspect}"  if "#{num}"=='' || num.sub(/\+?[0-9]+/,'')!=''
+  cnt[nam] = num
+end
+
 dst = ''
 if ARGV.size >= 1
   dst = cnt[ARGV.first]
@@ -66,7 +74,9 @@ num = `ssh nemo@#{jolladdr} commhistory-tool listgroups | grep ^Group | grep #{d
 grp = "-newgroup"
 grp = "-group #{num.split[1]}"  if num != ''
 cmd = "ssh nemo@#{jolladdr} commhistory-tool add #{grp} -text '\"#{msg}\"' -out -sms \"''\" #{dst.inspect}"
-puts '', Time.now, cmd
+
+puts '', Time.now, cmd  if debug
+
 exec cmd
 
 # ---

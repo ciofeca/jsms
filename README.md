@@ -14,11 +14,11 @@ Why:
 Requirements:
 - a Jolla phone connected to your LAN using a fixed IP address
 - the phone has to be in "developer mode" with *ssh* enabled and *authorized_keys*
-- a Linux box with *Ruby* installed
+- a Linux box with at least *Ruby 1.9* installed
 
 Configuration:
 - edit *jsms* script to verify/change the default options
-- create *$HOME/.jsms-contacts* with your aliases
+- create *$HOME/.jsms-contacts* with your *name,phone* aliases
 
 Usage:
 - accepts either a phone number or an alias
