@@ -5,8 +5,11 @@ Simple command-line script to send SMS messages via a Jolla phone.
 
 Yes, *j* stands for Jolla phone.
 
+The script runs in a Linux terminal window (for example: Ubuntu Gnome-Terminal)
+and sends *ssh* commands to Jolla phone on the same LAN.
+
 How:
-- *jsms lauriston Russia has no good generals. The only exception is Bagration.*
+- ubuntuprompt$ *jsms lauriston Russia has no good generals. The only exception is Bagration.*
 
 Why:
 - I spend a lot of time working in a Linux terminal window
@@ -31,3 +34,6 @@ What happens:
 
 Still missing:
 - does not check for text length (thus it cannot tell you if the message requires more than one SMS)
+
+Similar projects:
+- https://github.com/messaggiero/jollaSms
