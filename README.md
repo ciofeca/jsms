@@ -1,9 +1,7 @@
 jsms
 ====
 
-Simple command-line script to send SMS messages via a Jolla phone.
-
-Yes, *j* stands for Jolla phone.
+Simple command-line script to send SMS messages via *ssh* commands to a SailfishOS phone.
 
 The script runs in a Linux terminal window (for example: Ubuntu Gnome-Terminal)
 and sends *ssh* commands to Jolla phone on the same LAN.
@@ -15,9 +13,16 @@ Why:
 - I spend a lot of time working in a Linux terminal window
 
 Requirements:
-- a Jolla phone connected to your LAN using a fixed IP address
+- a SailfishOS/SailfishX phone connected to your LAN using a fixed IP address
 - the phone has to be in "developer mode" with *ssh* enabled and *authorized_keys*
 - a Linux box with at least *Ruby 1.9* installed
+
+Note: if you don't get UTF-8 characters correctly shown in the text messaging app,
+then you need to specify language support in */home/nemo/.bashrc* for example adding
+these three lines to it:
+    export LC_ALL=en_US.UTF-8
+    export LANG=en_US.UTF-8
+    export LANGUAGE=en_US.UTF-8
 
 Configuration:
 - edit *jsms* script to verify/change the default options
