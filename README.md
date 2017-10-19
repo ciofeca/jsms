@@ -13,13 +13,14 @@ Why:
 - I spend a lot of time working in a Linux terminal window
 
 Requirements:
-- a SailfishOS/SailfishX phone connected to your LAN using a fixed IP address
+- a SailfishOS/SailfishX phone connected to your LAN or WiFi, having a known IP address
 - the phone has to be in "developer mode" with *ssh* enabled and *authorized_keys*
 - a Linux box with at least *Ruby 1.9* installed
 
 Note: if you don't get UTF-8 characters correctly shown in the text messaging app,
 then you need to specify language support in */home/nemo/.bashrc* for example adding
 these three lines to it:
+
     export LC_ALL=en_US.UTF-8
     export LANG=en_US.UTF-8
     export LANGUAGE=en_US.UTF-8
